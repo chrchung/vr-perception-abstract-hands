@@ -10,15 +10,19 @@ public class Illusion
 {
     public Dictionary<string, Vector3> prop;
     public Dictionary<string, Vector3> size;
-    public Dictionary<string, Vector3> dof;
+    public Dictionary<string, List<float>> dof;
     public Vector3 vel;
+    public Vector3 pos;
+    public bool fixedPos;
 
     public Illusion(JsonData illusions)
     {
         size = new Dictionary<string, Vector3>();
-        dof = new Dictionary<string, Vector3>();
+        dof = new Dictionary<string, List<float>>();
         prop = new Dictionary<string, Vector3>();
         vel = new Vector3(1.0f, 1.0f, 1.0f);
+        pos = new Vector3(0.0f, 0.0f, 0.0f);
+        fixedPos = false;
 
         if (illusions["vel"] != null)
         {
@@ -52,9 +56,18 @@ public class Illusion
             for (int i = 0; i < illusions["dof"].Count; i++)
             {
                 List<string> vals = ((string)illusions["dof"][i]).Split(':').ToList<string>();
-                dof.Add(vals[0], new Vector3(float.Parse(vals[1]), float.Parse(vals[2]), float.Parse(vals[3])));
+                dof.Add(vals[0], new List<float> { float.Parse(vals[1]), float.Parse(vals[2]),
+                    float.Parse(vals[3]), float.Parse(vals[4]), float.Parse(vals[5]), float.Parse(vals[6])});
             }
         }
+
+        if (illusions["pos"] != null)
+        {
+            fixedPos = true;
+            pos = new Vector3(float.Parse((string)illusions["pos"][0]),
+                float.Parse((string)illusions["pos"][1]),
+                float.Parse((string)illusions["pos"][2]));
+        } 
 
     }
 

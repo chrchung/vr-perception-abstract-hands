@@ -104,8 +104,10 @@ namespace TestUnityVicon
                 {
                     Quaternion rot = new Quaternion(-(float)ORot.Rotation[0], (float)ORot.Rotation[1], (float)ORot.Rotation[2], -(float)ORot.Rotation[3]);
                     Vector3 eulerRotation = rot.eulerAngles;
-                    Vector3 restricted = distortionsController.illusions[distortionsController.trialId].dof[Bone.gameObject.name];
-                    Bone.localEulerAngles = new Vector3(ConstrainValue(eulerRotation[0], restricted[0]), ConstrainValue(eulerRotation[1], restricted[1]), ConstrainValue(eulerRotation[2], restricted[2]));
+                    List<float> restricted = distortionsController.illusions[distortionsController.trialId].dof[Bone.gameObject.name];
+                    Bone.localEulerAngles = new Vector3(ConstrainValue(eulerRotation[0], restricted[0], restricted[1]), 
+                        ConstrainValue(eulerRotation[1], restricted[2], restricted[3]), 
+                        ConstrainValue(eulerRotation[2], restricted[4], restricted[5]));
                 }
                 else
                 {
@@ -120,7 +122,10 @@ namespace TestUnityVicon
             {
                 Bone.localPosition = new Vector3(-0.001f * (float)OTran.Translation[0], 0.001f * (float)OTran.Translation[1], 0.001f * (float)OTran.Translation[2]);
 
-                if (distortionEnabled && Bone.gameObject.name == gameObject.name)
+                if (distortionsController.illusions[distortionsController.trialId].fixedPos && Bone.gameObject.name == gameObject.name)
+                {
+                    Bone.localPosition = distortionsController.illusions[distortionsController.trialId].pos;
+                } else if (distortionEnabled && Bone.gameObject.name == gameObject.name)
                 {
                     Bone.localPosition = new Vector3(0.001f * -(float)OTran.Translation[0] * distortionsController.illusions[distortionsController.trialId].vel[0],
                         0.001f * (float)OTran.Translation[1] * distortionsController.illusions[distortionsController.trialId].vel[1],
@@ -167,22 +172,22 @@ namespace TestUnityVicon
             }
         }
 
-        float ConstrainValue(float val, float restrict)
+        float ConstrainValue(float val, float min, float max)
         {
-            if (restrict == 360.0f)
+            if (min == -360.0f && max == 360.0f)
             {
                 return val;
             }
             else
             {
 
-                if (val > restrict)
+                if (val > max)
                 {
-                    return restrict;
+                    return max;
                 }
-                else if (val < -restrict)
+                else if (val < min)
                 {
-                    return -restrict;
+                    return min;
                 }
                 else
                 {
