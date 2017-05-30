@@ -19,6 +19,9 @@ namespace TestUnityVicon
         public bool distortionEnabled;
         public DistortionsController distortionsController;
 
+        private Vector3 curPos;
+        private Vector3 prevPos;
+
         ViconPegasusSDK.DotNET.Client MyClient = new ViconPegasusSDK.DotNET.Client();
 
         public Program()
@@ -53,21 +56,20 @@ namespace TestUnityVicon
             MyClient.EnableSegmentData();
 
             // get a frame from the data stream so we can inspect the list of subjects
-            MyClient.GetFrame();
+            //MyClient.GetFrame();
 
-            //Output_GetSubjectCount OGSC = MyClient.GetSubjectCount ();
-            //print("GetSubjectCount: "+ OGSC.Result + "|" + OGSC.SubjectCount);
+            ////Output_GetSubjectCount OGSC = MyClient.GetSubjectCount ();
+            ////print("GetSubjectCount: "+ OGSC.Result + "|" + OGSC.SubjectCount);
 
-            //// the first subjects in the data stream will be the original subjects unmodified by pegasus
-            //Output_GetSubjectName OGSN = MyClient.GetSubjectName(OGSC.SubjectCount - 1);
-            //print("GetSubjectName: "+ OGSN.Result + "|" + OGSN.SubjectName);
+            ////// the first subjects in the data stream will be the original subjects unmodified by pegasus
+            ////Output_GetSubjectName OGSN = MyClient.GetSubjectName(OGSC.SubjectCount - 1);
+            ////print("GetSubjectName: "+ OGSN.Result + "|" + +OGSN.SubjectName);
 
-            //SubjectName = OGSN.SubjectName;
+            ////SubjectName = OGSN.SubjectName;
 
-            // get the position of the root and point the camera at it
-            Output_GetSubjectRootSegmentName OGSRSN = MyClient.GetSubjectRootSegmentName(SubjectName);
-            Output_GetSegmentGlobalTranslation RootPos = MyClient.GetSegmentGlobalTranslation(SubjectName, OGSRSN.SegmentName);
-
+            //// get the position of the root and point the camera at it
+            //Output_GetSubjectRootSegmentName OGSRSN = MyClient.GetSubjectRootSegmentName(SubjectName);
+            //Output_GetSegmentGlobalTranslation RootPos = MyClient.GetSegmentGlobalTranslation(SubjectName, OGSRSN.SegmentName);
             //transform.localPosition = new Vector3(0.001f * -(float)RootPos.Translation[0], 0.001f * (float)RootPos.Translation[1], 0.001f * (float)RootPos.Translation[2]);
 
             if (distortionEnabled)
@@ -94,22 +96,30 @@ namespace TestUnityVicon
         private void ApplyBoneTransform(Transform Bone)
         {
 
+
             // update the bone transform from the data stream
             Output_GetSegmentLocalRotationQuaternion ORot = MyClient.GetSegmentLocalRotationQuaternion(SubjectName, Bone.gameObject.name);
             if (ORot.Result == Result.Success)
             {
-                Bone.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                //Bone.localPosition = new Vector3(1.0f, 1.0f, 1.0f);
 
-                if (distortionEnabled && distortionsController.illusions[distortionsController.trialId].dof.ContainsKey(Bone.gameObject.name))
+                if (distortionEnabled && IsKink() && !distortionsController.illusions[distortionsController.trialId].fixedPos)
+                {
+                    Bone.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
+                }
+                else if (distortionEnabled && distortionsController.illusions[distortionsController.trialId].dof.ContainsKey(Bone.gameObject.name))
                 {
                     Quaternion rot = new Quaternion(-(float)ORot.Rotation[0], (float)ORot.Rotation[1], (float)ORot.Rotation[2], -(float)ORot.Rotation[3]);
                     Vector3 eulerRotation = rot.eulerAngles;
                     List<float> restricted = distortionsController.illusions[distortionsController.trialId].dof[Bone.gameObject.name];
-                    Bone.localEulerAngles = new Vector3(ConstrainValue(eulerRotation[0], restricted[0], restricted[1]), 
-                        ConstrainValue(eulerRotation[1], restricted[2], restricted[3]), 
+                    Bone.localEulerAngles = new Vector3(ConstrainValue(eulerRotation[0], restricted[0], restricted[1]),
+                        ConstrainValue(eulerRotation[1], restricted[2], restricted[3]),
                         ConstrainValue(eulerRotation[2], restricted[4], restricted[5]));
                 }
-                else
+                else if (distortionEnabled && distortionsController.illusions[distortionsController.trialId].fixedPos)
+                {
+                    Bone.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
+                } else
                 {
                     Bone.localRotation = new Quaternion(-(float)ORot.Rotation[0], (float)ORot.Rotation[1], (float)ORot.Rotation[2], -(float)ORot.Rotation[3]);
                 }
@@ -120,46 +130,64 @@ namespace TestUnityVicon
             Output_GetSegmentLocalTranslation OTran = MyClient.GetSegmentLocalTranslation(SubjectName, Bone.gameObject.name);
             if (OTran.Result == Result.Success)
             {
-                Bone.localPosition = new Vector3(-0.001f * (float)OTran.Translation[0], 0.001f * (float)OTran.Translation[1], 0.001f * (float)OTran.Translation[2]);
+                prevPos = curPos;
+                curPos = new Vector3(0.001f * -(float)OTran.Translation[0], 0.001f * (float)OTran.Translation[1], 0.001f * (float)OTran.Translation[2]);
 
-                if (distortionsController.illusions[distortionsController.trialId].fixedPos && Bone.gameObject.name == gameObject.name)
+                // Bone.localPosition = new Vector3(-0.001f * (float)OTran.Translation[0], 0.001f * (float)OTran.Translation[1], 0.001f * (float)OTran.Translation[2]);
+
+                if (distortionEnabled && distortionsController.illusions[distortionsController.trialId].fixedPos && Bone.gameObject.name == "Arm")
                 {
                     Bone.localPosition = distortionsController.illusions[distortionsController.trialId].pos;
-                } else if (distortionEnabled && Bone.gameObject.name == gameObject.name)
+                } else if (distortionEnabled && Bone.gameObject.name == "Arm")
                 {
-                    Bone.localPosition = new Vector3(0.001f * -(float)OTran.Translation[0] * distortionsController.illusions[distortionsController.trialId].vel[0],
-                        0.001f * (float)OTran.Translation[1] * distortionsController.illusions[distortionsController.trialId].vel[1],
-                        0.001f * (float)OTran.Translation[2] * distortionsController.illusions[distortionsController.trialId].vel[2]);
+                    var bonePos = Bone.localPosition;
+
+                    //if (Mathf.Abs(trans[0] - curPos[0]) > 0.1)
+                    //{
+                        bonePos[0] = bonePos[0] + (curPos[0] - prevPos[0]) * distortionsController.illusions[distortionsController.trialId].vel[0];
+                    //}
+
+                    //if (Mathf.Abs(trans[1] - curPos[1]) > 0.1)
+                    //{
+                        bonePos[1] = bonePos[1] + (curPos[1] - prevPos[1]) * distortionsController.illusions[distortionsController.trialId].vel[1];
+                    //}
+
+                    //if (Mathf.Abs(trans[2] - curPos[2]) > 0.1)
+                    //{
+                        bonePos[2] = bonePos[2] + (curPos[2] - prevPos[2]) * distortionsController.illusions[distortionsController.trialId].vel[2];
+                    //}
+
+                    Bone.localPosition = curPos;
+
+
+                    //Bone.localPosition = new Vector3(0.001f * -(float)OTran.Translation[0] * distortionsController.illusions[distortionsController.trialId].vel[0],
+                    //    0.001f * (float)OTran.Translation[1] * distortionsController.illusions[distortionsController.trialId].vel[1],
+                    //    0.001f * (float)OTran.Translation[2] * distortionsController.illusions[distortionsController.trialId].vel[2]);
                 }
                 else
                 {
-                    Bone.localPosition = new Vector3(0.001f * -(float)OTran.Translation[0], 0.001f * (float)OTran.Translation[1], 0.001f * (float)OTran.Translation[2]);
+                    Bone.localPosition = curPos;
                 }
-
-
-                if (drawBones)
-                {
-                    CreateCylinder(Bone);
-                }
-
             }
 
             if (distortionEnabled && distortionsController.illusions[distortionsController.trialId].size.ContainsKey(Bone.gameObject.name))
             {
-                print(Bone.gameObject.name);
-
-                Bone.localScale = distortionsController.illusions[distortionsController.trialId].size[Bone.gameObject.name];
+                Bone.localPosition = distortionsController.illusions[distortionsController.trialId].size[Bone.gameObject.name];
             }
 
             if (distortionEnabled && distortionsController.illusions[distortionsController.trialId].prop.ContainsKey(Bone.gameObject.name))
             {
                 Vector3 newProps = distortionsController.illusions[distortionsController.trialId].prop[Bone.gameObject.name];
-                print(newProps);
-                Vector3 curScale = Bone.localScale;
+                Vector3 curScale = Bone.localPosition;
                 curScale[0] = curScale[0] * newProps[0];
                 curScale[1] = curScale[1] * newProps[1];
                 curScale[2] = curScale[2] * newProps[2];
-                Bone.localScale = curScale;
+                Bone.localPosition = curScale;
+            }
+
+            if (drawBones)
+            {
+                CreateCylinder(Bone);
             }
 
 
@@ -195,6 +223,34 @@ namespace TestUnityVicon
                 }
 
             }
+
+        }
+
+        bool IsKink()
+        {
+            if (!distortionsController.illusions[distortionsController.trialId].kink.ContainsKey("Hand"))
+            {
+                return false;
+            }
+
+            Output_GetSegmentLocalRotationQuaternion ORot = MyClient.GetSegmentLocalRotationQuaternion(SubjectName, "Hand");
+            if (ORot.Result != Result.Success)
+            {
+                return false;
+            }
+
+            Quaternion rot = new Quaternion(-(float)ORot.Rotation[0], (float)ORot.Rotation[1], (float)ORot.Rotation[2], -(float)ORot.Rotation[3]);
+            Vector3 eulerRotation = rot.eulerAngles;
+            List<float> restricted = distortionsController.illusions[distortionsController.trialId].kink["Hand"];
+            
+            if (eulerRotation[0] != ConstrainValue(eulerRotation[0], restricted[0], restricted[1]) || 
+                eulerRotation[1] != ConstrainValue(eulerRotation[1], restricted[2], restricted[3]) ||
+                eulerRotation[2] != ConstrainValue(eulerRotation[2], restricted[4], restricted[5]))
+            {
+                return false;
+            }
+
+            return true;
 
         }
 

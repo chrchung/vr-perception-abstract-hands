@@ -1,6 +1,9 @@
 {
 	"data": [
-		{"trialId":0, "vel": ["2.0", "2.0", "2.0"], "dof": ["R1D1:10:10:10:10:10:10", "R2D1:10:10:10:10:10:10:", "R3D1:10:10:10:10:10:10", "R4D1:10:10:10:10:10:10"], "size":["R2D1:5.0:5.0:5.0"], "prop":["R1D1:2.0:2.0:2.0"], "pos":["1.0", "1.0", "1.0"]},
-		{"trialId":1, "vel": ["2.0", "2.0", "2.0"], "dof": ["R1D1:10:10:10:10:10:10"], "prop":null, "size":null, "pos":null}
+		{"trialId":0, "vel":["3.0", "3.0", "3.0"], "dof":null, "size":null, "prop":null, "pos":null, "break":null},
+		{"trialId":1, "vel":null, "dof":["R1D1:10:10:10:10:10:10", "R1D2:10:10:10:10:10:10", "R2D1:-30:30:-30:30:-30:30"], "prop":null, "size":null, "pos":null, "break":null},
+		{"trialId":2, "vel":null, "dof":null, "prop":["R2D2:1.0:5.0:1.0"], "size":null, "pos":null, "break":null},
+		{"trialId":3, "vel":null, "dof":null, "prop":null, "size":["R3D2:0.0:0.1:0.0"], "pos":null, "break":null},
+		{"trialId":4, "vel":null, "dof":null, "prop":null, "size":["R3D2:0.0:0.1:0.0"], "pos":null, "break":["Hand:-30:30:-360:360:-360:360"]}
 	]
 }

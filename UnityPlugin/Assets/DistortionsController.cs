@@ -11,18 +11,22 @@ public class Illusion
     public Dictionary<string, Vector3> prop;
     public Dictionary<string, Vector3> size;
     public Dictionary<string, List<float>> dof;
+    public Dictionary<string, List<float>> kink;
     public Vector3 vel;
     public Vector3 pos;
     public bool fixedPos;
+    public string text;
 
     public Illusion(JsonData illusions)
     {
         size = new Dictionary<string, Vector3>();
         dof = new Dictionary<string, List<float>>();
+        kink = new Dictionary<string, List<float>>();
         prop = new Dictionary<string, Vector3>();
         vel = new Vector3(1.0f, 1.0f, 1.0f);
         pos = new Vector3(0.0f, 0.0f, 0.0f);
         fixedPos = false;
+        text = null;
 
         if (illusions["vel"] != null)
         {
@@ -67,7 +71,22 @@ public class Illusion
             pos = new Vector3(float.Parse((string)illusions["pos"][0]),
                 float.Parse((string)illusions["pos"][1]),
                 float.Parse((string)illusions["pos"][2]));
-        } 
+        }
+
+        if (illusions["break"] != null)
+        {
+            for (int i = 0; i < illusions["break"].Count; i++)
+            {
+                List<string> vals = ((string)illusions["break"][i]).Split(':').ToList<string>();
+                kink.Add(vals[0], new List<float> { float.Parse(vals[1]), float.Parse(vals[2]),
+                    float.Parse(vals[3]), float.Parse(vals[4]), float.Parse(vals[5]), float.Parse(vals[6])});
+            }
+        }
+
+        if (illusions["text"] != null)
+        {
+            text = (string)illusions["text"];
+        }
 
     }
 
@@ -79,9 +98,11 @@ public class DistortionsController : MonoBehaviour {
     public Dictionary<int, Illusion> illusions;
     public int trialId;
     public bool needUpdate;
+    public int numTrials;
 
     // Use this for initialization
     void Start () {
+        numTrials = 0;
         illusions = new Dictionary<int, Illusion>();
         string jsonString = File.ReadAllText(Application.dataPath + filename);
 
@@ -92,6 +113,7 @@ public class DistortionsController : MonoBehaviour {
             // parse illusion
             Illusion ill = new Illusion(jsonData["data"][i]);
             illusions.Add((int)jsonData["data"][i]["trialId"], ill);
+            numTrials = numTrials + 1;
         }
 
     }

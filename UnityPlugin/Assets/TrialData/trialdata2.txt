@@ -1,0 +1,9 @@
+{
+	"data": [
+		{"trialId":0, "vel":["3.0", "3.0", "3.0"], "dof":["Arm:0:0:0:0:180:180"], "size":null, "prop":null, "pos":["-0.506", "-0.22", "0.16"], "break":null,  "text":null},
+		{"trialId":1, "vel":null, "dof":["Arm:0:0:0:0:180:180", "R1D1:10:10:10:10:10:10", "R1D2:10:10:10:10:10:10", "R2D1:30:30:30:30:30:30"], "prop":null, "size":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":null},
+		{"trialId":2, "vel":null, "dof":["Arm:0:0:0:0:180:180"], "prop":["R2D2:1.0:5.0:1.0"], "size":null, "pos":["-0.506", "-0.22", "0.4"], "break":null, "text":null},
+		{"trialId":3, "vel":null, "dof":["Arm:0:0:0:0:180:180"], "prop":null, "size":["R3D2:0.0:0.1:0.0"], "pos":["0.0", "-0.5", "0.3"], "break":null, "text":null},
+		{"trialId":4, "vel":null, "dof":["Arm:0:0:0:0:180:180"], "prop":null, "size":["R3D2:0.0:0.1:0.0"], "pos":null, "break":null, "text":null}
+	]
+}

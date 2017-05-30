@@ -1,0 +1,9 @@
+{
+	"data": [
+		{"trialId":0, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"wood"},
+		{"trialId":1, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"blade"},
+		{"trialId":2, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"wood"},
+		{"trialId":3, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"blade"},
+		{"trialId":4, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"wood"}
+	]
+}
