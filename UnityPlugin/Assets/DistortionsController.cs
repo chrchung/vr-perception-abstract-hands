@@ -16,6 +16,20 @@ public class Illusion
     public Vector3 pos;
     public bool fixedPos;
     public string text;
+    public bool practice;
+    public Vector3 origin;
+    public bool originOffset;
+    public Vector3 tarPos;
+    public string room;
+    public Vector3 obsPos;
+    public int handId;
+    public Vector3 propSize;
+    public List<string> hide;
+    public Dictionary<string, string> parent;
+    public Vector3 virtualPropPos;
+    public Quaternion virtualPropRot;
+    public List<string> sticks;
+    public bool solid;
 
     public Illusion(JsonData illusions)
     {
@@ -27,6 +41,20 @@ public class Illusion
         pos = new Vector3(0.0f, 0.0f, 0.0f);
         fixedPos = false;
         text = null;
+        practice = false;
+        originOffset = false;
+        origin = new Vector3(0.0f, 0.0f, 0.0f);
+        tarPos = new Vector3(0.0f, 0.0f, 0.0f);
+        obsPos = new Vector3(0.0f, 0.0f, 0.0f);
+        room = null;
+        handId = 0;
+        propSize = new Vector3(0.0f, 0.0f, 0.0f);
+        hide = new List<string>();
+        parent = new Dictionary<string, string>();
+        virtualPropPos = Vector3.zero;
+        virtualPropRot = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+        solid = false;
+        sticks = new List<string>();
 
         if (illusions["vel"] != null)
         {
@@ -88,6 +116,92 @@ public class Illusion
             text = (string)illusions["text"];
         }
 
+        if (illusions["practice"] != null)
+        {
+            practice = (bool)illusions["practice"];
+        }
+
+        if (illusions["origin"] != null)
+        {
+            originOffset = true;
+            origin = new Vector3(float.Parse((string)illusions["origin"][0]),
+                float.Parse((string)illusions["origin"][1]),
+                float.Parse((string)illusions["origin"][2]));
+        }
+
+        if (illusions["room"] != null)
+        {
+            room = (string)illusions["room"];
+        }
+
+        if (illusions["tarPos"] != null)
+        {
+            tarPos = new Vector3(float.Parse((string)illusions["tarPos"][0]),
+                            float.Parse((string)illusions["tarPos"][1]),
+                            float.Parse((string)illusions["tarPos"][2]));
+        }
+
+
+        if (illusions["obsPos"] != null)
+        {
+            obsPos = new Vector3(float.Parse((string)illusions["obsPos"][0]),
+                            float.Parse((string)illusions["obsPos"][1]),
+                            float.Parse((string)illusions["obsPos"][2]));
+        }
+
+        if (illusions["handId"] != null)
+        {
+            handId = (int)illusions["handId"];
+        }
+
+        if (illusions["propSize"] != null)
+        {
+            propSize = new Vector3(float.Parse((string)illusions["propSize"][0]),
+                            float.Parse((string)illusions["propSize"][1]),
+                            float.Parse((string)illusions["propSize"][2]));
+        }
+
+        if (illusions["hide"] != null)
+        {
+            for (int i = 0; i < illusions["hide"].Count; i++)
+            {
+                hide.Add((string)illusions["hide"][i]);
+            }
+        }
+
+        if (illusions["parent"] != null)
+        {
+            for (int i = 0; i < illusions["parent"].Count; i++)
+            {
+                List<string> vals = ((string)illusions["parent"][i]).Split(':').ToList<string>();
+                parent.Add(vals[0], vals[1]);
+            }
+        }
+
+        if (illusions["virtualPropPos"] != null)
+        {
+            virtualPropPos = new Vector3(float.Parse((string)illusions["virtualPropPos"][0]),
+                            float.Parse((string)illusions["virtualPropPos"][1]),
+                            float.Parse((string)illusions["virtualPropPos"][2]));
+            virtualPropRot = Quaternion.Euler(new Vector3(float.Parse((string)illusions["virtualPropPos"][3]),
+                            float.Parse((string)illusions["virtualPropPos"][4]),
+                            float.Parse((string)illusions["virtualPropPos"][5])));
+        }
+
+        //if (illusions["solid"] != null)
+        //{
+        //    solid = (bool)illusions["solid"];
+        //}
+
+        //if (illusions["sticks"] != null)
+        //{
+        //    for (int i = 0; i < illusions["sticks"].Count; i++)
+        //    {
+        //        sticks.Add((string)illusions["sticks"][i]);
+        //    }
+        //}
+
+
     }
 
 }
@@ -99,10 +213,13 @@ public class DistortionsController : MonoBehaviour {
     public int trialId;
     public bool needUpdate;
     public int numTrials;
+    public int numTrialsCompleted;
 
     // Use this for initialization
     void Start () {
+        trialId = -1;
         numTrials = 0;
+        numTrialsCompleted = 0;
         illusions = new Dictionary<int, Illusion>();
         string jsonString = File.ReadAllText(Application.dataPath + filename);
 
@@ -115,6 +232,13 @@ public class DistortionsController : MonoBehaviour {
             illusions.Add((int)jsonData["data"][i]["trialId"], ill);
             numTrials = numTrials + 1;
         }
+
+    }
+
+    public void StartNewTrial(int id)
+    {
+        trialId = id;
+        numTrialsCompleted = numTrialsCompleted + 1;
 
     }
 	

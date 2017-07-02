@@ -1,9 +1,8 @@
 {
 	"data": [
-		{"trialId":0, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"wood"},
-		{"trialId":1, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"blade"},
-		{"trialId":2, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"wood"},
-		{"trialId":3, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"blade"},
-		{"trialId":4, "vel":null, "dof":null, "size":["obstacle:0.0:0.1:0.0"], "prop":null, "pos":["0.498", "-0.22", "0.104"], "break":null, "text":"wood"}
+		{"trialId":0,  "solid":null, "virtualPropPos":null, "parent":null, "handId":0, "hide": null,"vel":null, "dof":null, "size":["obstacle:0:0:0"], "prop":null, "pos":null, "break":null, "text":"Wood", "practice":true, "origin": null, "room":null, "tarPos":["-0.2", "0.0", "0.6"], "obsPos":null, "propSize":null},
+		{"trialId":1,  "solid":null, "virtualPropPos":null, "parent":null, "handId":0, "hide": null,"vel":null, "dof":null, "size":["obstacle:0:0:0"], "prop":null, "pos":null, "break":null, "text":"Spike", "practice":true, "origin": null, "room":null, "tarPos":["0.2", "0.0", "0.6"], "obsPos":null, "propSize":null},
+		{"trialId":2,  "solid":null, "virtualPropPos":null, "parent":null, "handId":0, "hide": null,"vel":null, "dof":null, "size":["obstacle:0:0:0"], "prop":null, "pos":null, "break":null, "text":"Spin", "practice":true, "origin": null, "room":null, "tarPos":["-0.2", "0.0", "0.6"], "obsPos":null, "propSize":null},
+		{"trialId":3,  "solid":null, "virtualPropPos":null, "parent":null, "handId":0, "hide": null,"vel":null, "dof":null, "size":["obstacle:0:0:0"], "prop":null, "pos":null, "break":null, "text":"WallOfFire", "practice":true, "origin": null, "room":null, "tarPos":["0.2", "0.0", "0.6"], "obsPos":null, "propSize":null}
 	]
 }

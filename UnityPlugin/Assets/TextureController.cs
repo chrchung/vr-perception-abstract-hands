@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DigitalRuby.PyroParticles;
 
 public class TextureController : MonoBehaviour {
 
@@ -11,37 +12,56 @@ public class TextureController : MonoBehaviour {
 
     private float speed = 0f;
 
-    public GameObject harmful;
-    public GameObject unharmful;
+    public List<GameObject> Obstacles;
 
 
 	// Use this for initialization
 	void Start ()
     {
-	}
-	
-	// Update is called once per frame
-	void Update ()
+        foreach (Transform child in transform)
+        {
+            Obstacles.Add(child.gameObject);
+        }
+
+        gameObject.SetActive(false);
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
 
     }
 
     // 0 = saw, 1 = wood
-    public void UpdateObstacle(string mode,  Vector3 scale)
+    public void UpdateObstacle(string mode,  Vector3 scale, Vector3 pos)
     {
-        Debug.Log(mode);
-        Debug.Log(scale);
+        for (var i = 0; i < Obstacles.Count; i++)
+        {
+            if (Obstacles[i].name != mode)
+            {
+                Obstacles[i].SetActive(false);
+            }
+            else
+            {
+                if (mode == "WallOfFire")
+                {
+                    Obstacles[i].GetComponent<FireConstantBaseScript>().enabled = true;
+                }
+                Obstacles[i].SetActive(true);
+            }
 
-        if (mode == "blade") {
-            harmful.SetActive(true);
-            unharmful.SetActive(false);
-        } else {
-            harmful.SetActive(false);
-            unharmful.SetActive(true);
         }
 
-        //transform.localPosition = pos;
-        transform.localScale = scale;
+        if (scale != new Vector3(0.0f, 0.0f, 0.0f))
+        {
+            transform.localScale = scale;
+        }
+
+        if (pos != new Vector3(0.0f, 0.0f, 0.0f))
+        {
+            transform.localPosition = pos;
+        }
+
     }
 
     private void reshuffle(int[] ar)

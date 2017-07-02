@@ -26,13 +26,16 @@ public class TaController : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        //isCollision = true;
-        GetComponent<Renderer>().material.color = col2;
+        if (other.gameObject.name != "Tile01")
+        {
+            isCollision = true;
+            GetComponent<Renderer>().material.color = col2;
+        }
+
     }
 
     void OnTriggerExit(Collider other)
     {
-        isCollision = true;
         GetComponent<Renderer>().material.color = col1;
     }
 

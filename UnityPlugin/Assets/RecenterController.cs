@@ -18,7 +18,6 @@ public class RecenterController : MonoBehaviour {
 		if (Input.GetKey(KeyCode.F12))
         {
             UnityEngine.VR.InputTracking.Recenter();
-            print(cam.localPosition);
            // hand.position = new Vector3(cam.position[0], cam.position[1], cam.position[2]);
 
         }
